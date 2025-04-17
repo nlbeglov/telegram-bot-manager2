@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления ботами-предложками</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/telegram-web-app/6.7.0/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        .telegram-theme {
+            --tg-theme-bg-color: #ffffff;
+            --tg-theme-text-color: #222222;
+            --tg-theme-hint-color: #8a8a8a;
+            --tg-theme-link-color: #2481cc;
+            --tg-theme-button-color: #5288c1;
+            --tg-theme-button-text-color: #ffffff;
+        }
+        .tg-button {
+            background-color: var(--tg-theme-button-color);
+            color: var(--tg-theme-button-text-color);
+        }
+    </style>
+</head>
+<body class="telegram-theme">
+<div class="container mx-auto px-4 py-8">
+    <header class="mb-6">
+        <h1 class="text-2xl font-bold text-center mb-2">Панель управления ботами-предложками</h1>
+        <p class="text-center text-gray-600">Создавайте и управляйте ботами для приема предложений</p>
+    </header>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4">Мои боты</h2>
+        <div id="bots-list" class="space-y-4">
+            <!-- Боты будут добавлены здесь динамически -->
+            <div class="animate-pulse">
+                <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+        </div>
+        <div class="mt-4">
+            <button id="create-bot-btn" class="tg-button px-4 py-2 rounded font-medium">➕ Создать нового бота</button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6 mb-6" id="bot-details" style="display: none;">
+        <h2 class="text-xl font-semibold mb-4">Управление ботом <span id="bot-name"></span></h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="font-medium mb-2">Статус</h3>
+                <div class="flex items-center">
+                    <span id="bot-status" class="mr-2">⏳ Загрузка...</span>
+                    <button id="toggle-status-btn" class="tg-button px-2 py-1 rounded text-sm">Изменить</button>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-4 rounded">
+                <h3 class="font-medium mb-2">Статистика</h3>
+                <div id="bot-stats">⏳ Загрузка статистики...</div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-medium mb-2">Настройки бота</h3>
+                <form id="bot-settings-form">
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Имя бота</label>
+                        <input type="text" id="bot-settings-name" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Имя бота">
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Приветственное сообщение</label>
+                        <textarea id="bot-settings-welcome" class="w-full px-3 py-2 border border-gray-300 rounded" rows="3" placeholder="Приветственное сообщение"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Сообщение о получении предложения</label>
+                        <textarea id="bot-settings-confirmation" class="w-full px-3 py-2 border border-gray-300 rounded" rows="2" placeholder="Сообщение о получении"></textarea>
+                    </div>
+                    <button type="submit" class="tg-button px-4 py-2 rounded font-medium">Сохранить настройки</button>
+                </form>
+            </div>
+
+            <div>
+                <h3 class="font-medium mb-2">Каналы для публикации</h3>
+                <div id="channels-list" class="space-y-2">
+                    <p>⏳ Загрузка каналов...</p>
+                </div>
+                <div class="mt-2">
+                    <form id="add-channel-form" class="flex items-center">
+                        <input type="text" id="channel-username" class="flex-1 px-3 py-2 border border-gray-300 rounded-l" placeholder="@имя_канала">
+                        <button type="submit" class="tg-button px-4 py-2 rounded-r font-medium">Добавить</button>
+                    </form>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-medium mb-2">Администраторы</h3>
+                <div id="admins-list" class="space-y-2">
+                    <p>⏳ Загрузка администраторов...</p>
+                </div>
+                <div class="mt-2">
+                    <form id="add-admin-form" class="flex items-center">
+                        <input type="text" id="admin-username" class="flex-1 px-3 py-2 border border-gray-300 rounded-l" placeholder="@имя_пользователя">
+                        <button type="submit" class="tg-button px-4 py-2 rounded-r font-medium">Добавить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-gray-200">
+            <button id="back-to-list-btn" class="px-4 py-2 border border-gray-300 rounded font-medium">← Назад к списку ботов</button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6" id="create-bot-form" style="display: none;">
+        <h2 class="text-xl font-semibold mb-4">Создание нового бота</h2>
+        <form id="new-bot-form">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Токен от @BotFather</label>
+                <input type="text" id="new-bot-token" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ" required>
+                <p class="text-sm text-gray-600 mt-1">Получите токен, создав нового бота через @BotFather</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Имя бота</label>
+                <input type="text" id="new-bot-name" class="w-full px-3 py-2 border border-gray-300 rounded" placeholder="Предложка канала" required>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Приветственное сообщение</label>
+                <textarea id="new-bot-welcome" class="w-full px-3 py-2 border border-gray-300 rounded" rows="3" placeholder="Привет! Отправь свое предложение, и оно будет рассмотрено администраторами." required></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="button" id="cancel-create-btn" class="px-4 py-2 border border-gray-300 rounded font-medium">Отмена</button>
+                <button type="submit" class="tg-button px-4 py-2 rounded font-medium">Создать бота</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Инициализация Telegram WebApp
+    const telegram = window.Telegram.WebApp;
+    telegram.expand();
+    telegram.ready();
+
+    // Получение данных пользователя из Telegram
+    const initData = telegram.initData || '';
+    const userId = telegram.initDataUnsafe?.user?.id || '';
+
+    // Элементы интерфейса
+    const botsList = document.getElementById('bots-list');
+    const botDetails = document.getElementById('bot-details');
+    const createBotForm = document.getElementById('create-bot-form');
+    const createBotBtn = document.getElementById('create-bot-btn');
+    const cancelCreateBtn = document.getElementById('cancel-create-btn');
+    const backToListBtn = document.getElementById('back-to-list-btn');
+
+    // Обработчики кнопок навигации
+    createBotBtn.addEventListener('click', () => {
+        botsList.parentElement.style.display = 'none';
+        botDetails.style.display = 'none';
+        createBotForm.style.display = 'block';
+    });
+
+    cancelCreateBtn.addEventListener('click', () => {
+        createBotForm.style.display = 'none';
+        botsList.parentElement.style.display = 'block';
+    });
+
+    backToListBtn.addEventListener('click', () => {
+        botDetails.style.display = 'none';
+        botsList.parentElement.style.display = 'block';
+    });
+
+    // Загрузка списка ботов (тестовые данные)
+    function loadBotsList() {
+        // В реальном приложении здесь был бы запрос к API
+        const testBots = [
+            { id: 1, name: 'Предложка канала', active: true },
+            { id: 2, name: 'Отзывы о товарах', active: false }
+        ];
+
+        botsList.innerHTML = '';
+
+        if (testBots.length === 0) {
+            botsList.innerHTML = '<p class="text-gray-600">У вас пока нет ботов. Создайте первого бота!</p>';
+            return;
+        }
+
+        testBots.forEach(bot => {
+            const botItem = document.createElement('div');
+            botItem.className = 'bg-gray-50 p-4 rounded flex justify-between items-center';
+            botItem.innerHTML = `
+                    <div>
+                        <h3 class="font-medium">${bot.name}</h3>
+                        <p class="text-sm text-gray-600">Статус: ${bot.active ? '<span class="text-green-600">✅ Активен</span>' : '<span class="text-red-600">❌ Неактивен</span>'}</p>
+                    </div>
+                    <button class="manage-bot-btn tg-button px-3 py-1 rounded text-sm" data-id="${bot.id}">Управление</button>
+                `;
+            botsList.appendChild(botItem);
+
+            // Обработчик кнопки управления
+            botItem.querySelector('.manage-bot-btn').addEventListener('click', () => {
+                openBotDetails(bot.id);
+            });
+        });
+    }
+
+    // Открытие деталей бота
+    function openBotDetails(botId) {
+        // В реальном приложении здесь был бы запрос к API
+        const botData = {
+            id: botId,
+            name: botId === 1 ? 'Предложка канала' : 'Отзывы о товарах',
+            active: botId === 1,
+            welcomeMessage: 'Привет! Отправь своё предложение для публикации в канал.',
+            confirmationMessage: '✅ Ваше сообщение получено и будет рассмотрено администраторами.',
+            stats: {
+                messages_received: 150,
+                messages_published: 85,
+                messages_rejected: 65
+            }
+        };
+
+        // Заполняем данные
+        document.getElementById('bot-name').textContent = botData.name;
+        document.getElementById('bot-status').innerHTML = botData.active ?
+            '<span class="text-green-600">✅ Активен</span>' :
+            '<span class="text-red-600">❌ Неактивен</span>';
+
+        document.getElementById('bot-settings-name').value = botData.name;
+        document.getElementById('bot-settings-welcome').value = botData.welcomeMessage;
+        document.getElementById('bot-settings-confirmation').value = botData.confirmationMessage;
+
+        const statsHtml = `
+                <p>📨 Получено сообщений: ${botData.stats.messages_received}</p>
+                <p>📢 Опубликовано: ${botData.stats.messages_published}</p>
+                <p>❌ Отклонено: ${botData.stats.messages_rejected}</p>
+            `;
+        document.getElementById('bot-stats').innerHTML = statsHtml;
+
+        // Тестовые данные для каналов
+        document.getElementById('channels-list').innerHTML = `
+                <div class="bg-gray-100 p-2 rounded flex justify-between">
+                    <span>@channel_name</span>
+                    <button class="text-red-600 text-sm">Удалить</button>
+                </div>
+            `;
+
+        // Тестовые данные для администраторов
+        document.getElementById('admins-list').innerHTML = `
+                <div class="bg-gray-100 p-2 rounded flex justify-between">
+                    <span>@admin_user (Главный)</span>
+                    <button class="text-red-600 text-sm" disabled>Удалить</button>
+                </div>
+                <div class="bg-gray-100 p-2 rounded flex justify-between">
+                    <span>@moderator</span>
+                    <button class="text-red-600 text-sm">Удалить</button>
+                </div>
+            `;
+
+        // Показываем детали и скрываем список
+        botsList.parentElement.style.display = 'none';
+        createBotForm.style.display = 'none';
+        botDetails.style.display = 'block';
+    }
+
+    // Обработчик формы создания бота
+    document.getElementById('new-bot-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const token = document.getElementById('new-bot-token').value;
+        const name = document.getElementById('new-bot-name').value;
+        const welcome = document.getElementById('new-bot-welcome').value;
+
+        // В реальном приложении здесь был бы запрос к API
+        console.log('Создание бота с данными:', { token, name, welcome });
+
+        // Имитация успешного создания
+        telegram.showPopup({
+            title: 'Бот создан!',
+            message: `Бот "${name}" успешно создан и готов к использованию`,
+            buttons: [{ type: 'ok' }]
+        });
+
+        // Сброс формы и возврат к списку
+        this.reset();
+        createBotForm.style.display = 'none';
+        botsList.parentElement.style.display = 'block';
+
+        // Перезагрузка списка ботов
+        loadBotsList();
+    });
+
+    // Загружаем список ботов при открытии
+    loadBotsList();
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+common:
+  welcome: "👋 Welcome to the proposal bot manager!"
+  create_bot: "Create your bot for receiving proposals to your channel. What would you like to do?"
+  back: "🔙 Back"
+  error: "❌ Error: {0}"
+  success: "✅ Success!"
+  status: "Status"
+  language: "Change language"
+  create_bot_button: "Create new bot"
+  my_bots: "My bots"
+  help: "Help"
+
+bot:
+  create:
+    title: "🤖 To create a new bot, you'll need a token from @BotFather."
+    instructions: "1. Message @BotFather and create a new bot with the /newbot command\n2. Copy the token you receive and send it to me\n\nPlease, send your bot token:"
+    token_invalid: "❌ The token you entered doesn't match the format of a Telegram bot token.\nPlease enter a valid token received from @BotFather."
+    token_accepted: "✅ Token accepted!\n\nNow enter a name for your proposal bot:"
+    name_invalid: "❌ Bot name must be between 3 and 64 characters.\nPlease enter a different name."
+    name_accepted: "✅ Name accepted!\n\nNow enter a welcome message that will be shown to users when they first contact your bot:"
+    welcome_invalid: "❌ Welcome message is too long (maximum 4096 characters).\nPlease shorten your message."
+    limit_reached: "❌ With the free version, you can only create one bot.\nPurchase a Premium subscription to create additional bots."
+    success: "🎉 Congratulations! Your proposal bot has been successfully created!\n\nBot name: {0}\nNow you can configure it through the management menu."
+    error: "❌ An error occurred while creating the bot. Please try again later or make sure the token is valid and the bot is not already registered in the system."
+
+  help:
+    title: "📚 *How to use the proposal bot*"
+    steps: "1. Add the bot as an administrator to your channel\n2. Configure the bot through the 'Manage bot' menu\n3. When users write to the bot, you receive their messages\n4. For each message, you have buttons: publish, edit, reject\n5. Published messages appear in the channel"
+    commands: "Additional bot commands:\n/help - this help\n/stats - bot statistics\n/settings - bot settings"
+    button: "How to use"
+
+  manage:
+    title: "⚙️ *Managing bot {0}*"
+    select_action: "Select an action to manage the bot:"
+    activate: "✅ Activate"
+    deactivate: "❌ Deactivate"
+    settings: "⚙️ Settings"
+    admins: "👥 Administrators"
+    channels: "📢 Channels"
+    stats: "📊 Statistics"
+    delete: "🗑️ Delete bot"
+    back_to_list: "🔙 Back to bot list"
+    webapp: "🌐 Open web panel"
+    button: "Manage bot"
+
+bots:
+  list:
+    title: "🤖 *Your bots*"
+    empty: "You don't have any proposal bots yet. Create your first bot!"
+    status_active: "✅ Active"
+    status_inactive: "❌ Inactive"
+
+premium:
+  info:
+    title: "💎 *Premium subscription*"
+    description: "Discover enhanced capabilities:"
+    features: "✅ Up to 10 proposal bots\n✅ Up to 10 administrators per bot\n✅ Up to 5 channels for publication\n✅ Scheduled posting\n✅ Custom bot avatar\n✅ Remove reference to the main bot\n✅ Telegram Mini Apps integration"
+    prices: "Prices:\n• Monthly subscription: 299₽\n• Annual subscription: 2990₽"
+    buy: "Click 'Buy Premium' to purchase a subscription."
+  buy: "💎 Buy Premium"
+  monthly_subscription: "Monthly subscription (299₽)"
+  yearly_subscription: "Annual subscription (2990₽)"
+
+help:
+  title: "📚 *Help*"
+  description: "This bot allows you to create and manage proposal bots for your Telegram channels."
+  what_is: "🤖 *What is a proposal bot?*\nIt's a bot that collects proposals from subscribers and forwards them to channel administrators for moderation."
+  how_to: "🚀 *How to start?*\n1. Create a bot through @BotFather\n2. Click 'Create new bot' in the menu\n3. Enter the token received from @BotFather\n4. Configure and launch your bot"
+  premium: "💎 *Premium subscription*\nGet access to advanced features:\n• Multiple proposal bots\n• Scheduled publication\n• Custom bot avatar\n• And much more"
